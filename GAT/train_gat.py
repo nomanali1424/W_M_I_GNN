@@ -6,7 +6,7 @@ from models import GAT
 import os
 import time
 # Add the directory containing utils.py to sys.path
-sys.path.append(r"C:\Users\Noman\Desktop\Github\Tools\W_M_I_GNN")
+sys.path.append(r"C:\Users\Noman\Desktop\Github\W_M_I_GNN")
 from utils import *
 
 class LoopPhase:
@@ -108,7 +108,7 @@ def train_gat():
     global BEST_VAL_ACC, BEST_VAL_LOSS, PATIENCE_CNT
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data_path = r"C:\Users\Noman\Desktop\Github\Tools\W_M_I_GNN\data_gat\cora"
+    data_path = r"C:\Users\Noman\Desktop\Github\W_M_I_GNN\data_gat\cora"
     edge_index, features, labels, idx_train, idx_val, idx_test = load_data_gat(data_path=data_path, device=device)
 
     # edge_index, features, labels, idx_train, idx_val, idx_test = load_data_gat("data_gat/cora", device)
