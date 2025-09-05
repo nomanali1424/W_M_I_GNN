@@ -5,29 +5,25 @@ from sklearn.preprocessing import OneHotEncoder
 
 
 
+from sklearn.preprocessing import OneHotEncoder
+
 def encode_onehot(labels):
     encoder = OneHotEncoder(sparse_output=False, dtype=np.int32)
     labels_onehot = encoder.fit_transform(labels.reshape(-1, 1))
-    
-    # categories_: unique labels in sorted order
-    classes = encoder.categories_[0]
-    print(classes)
-    # inverse_transform gives us back the original label
-    return labels_onehot, labels, classes, encoder
+    labels_idx = encoder.transform(labels.reshape(-1, 1)).argmax(axis=1)
+    return labels_onehot, labels_idx, encoder.categories_[0], encoder
 
 
-
-def load_cora(path=r"data/cora/", graph_type="gcn", device="cpu"):
+def load_data(path=r"data/cora/", graph_type="gcn", device="cpu"):
     print(f"Loading Cora dataset for {graph_type.upper()}...")
 
     idx_features_labels = np.genfromtxt(f"{path}cora.content", dtype=np.dtype(str))
     features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
-    # labels_raw = idx_features_labels[:, -1]
-    # classes = {c: i for i, c in enumerate(sorted(set(labels_raw)))}
-    # labels = np.array([classes[l] for l in labels_raw])
+    labels_onehot, labels_idx, classes, encoder = encode_onehot(idx_features_labels[:, -1])
 
-    labels_raw = idx_features_labels[:, -1]
-    labels_onehot, labels, classes, encoder = encode_onehot(labels_raw)
+    # Training uses indices
+    labels = torch.LongTensor(labels_idx).to(device)
+
 
     # Step 2: Graph structure (edges)
     idx = np.array(idx_features_labels[:, 0], dtype=np.int32)
